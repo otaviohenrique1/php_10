@@ -36,18 +36,30 @@ class PdoStudentRepository implements StudentRepository
 
   public function hydrateStudentList(PDOStatement $stmt): array
   {
-    $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC); // Pega todos os alunos
+    $studentDataList = $stmt->fetchAll(); // Pega todos os alunos
+    // $studentDataList = $stmt->fetchAll(PDO::FETCH_ASSOC); // Pega todos os alunos
     $studentList = [];
 
     foreach ($studentDataList as $studentData) {
-      $studentList[] = new Student(
+      $student = new Student(
         $studentData['id'],
         $studentData['name'],
         new DateTimeImmutable($studentData['birth_date']),
       );
+
+      $this->fillPhonesOf($student);
+
+      $studentList[] = $student;
     }
 
     return $studentList;
+  }
+
+  public function fillPhonesOf(Student $student): void
+  {
+    $sqlQuery = 'SELECT id, area_code, number FROM phones WHERE student_id = ?';
+    $stmt = $this->connection->prepare($sqlQuery);
+    $stmt->bindValue(1, $student->id(), PDO::PARAM_INT);
   }
 
   public function save(Student $student): bool
