@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use PDO;
 use PDOStatement;
+use RuntimeException;
 
 class PdoStudentRepository implements StudentRepository
 {
@@ -61,6 +62,7 @@ class PdoStudentRepository implements StudentRepository
   {
     $insertQuery = "INSERT INTO students (name, birth_date) VALUES (:name, :birth_date);";
     $stmt = $this->connection->prepare($insertQuery);
+
     $success = $stmt->execute([
       ':name' => $student->name(),
       ':birth_date' => $student->birthDate()->format('Y-m-d'),
