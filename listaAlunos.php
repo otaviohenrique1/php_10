@@ -1,13 +1,16 @@
 <?php
 
 use Alura\Pdo\Domain\Model\Student;
+use Alura\Pdo\Domain\Repository\PdoStudentRepository;
 use Alura\Pdo\Infrastructure\Persistence\ConnectionCreator;
 
 require_once 'vendor/autoload.php';
+require_once 'src/infratructure/Persistance/ConnectionCreator.php';
+require_once 'src/infratructure/Repository/PdoStudentRepository.php';
 
-$pdo = ConnectionCreator::createConnection();
+// $pdo = ConnectionCreator::createConnection();
 
-$statement = $pdo->query('SELECT * FROM students');
+// $statement = $pdo->query('SELECT * FROM students');
 
 // $statement = $pdo->query('SELECT * FROM students WHERE id = 1');
 // var_dump($statement->fetchColumn(1)); // Pega dado de aluno por coluna
@@ -23,18 +26,23 @@ $statement = $pdo->query('SELECT * FROM students');
 //   echo $student->age() . PHP_EOL;
 // }
 
-$studentDataList = $statement->fetchAll(PDO::FETCH_ASSOC); // Pega todos os alunos
+// $studentDataList = $statement->fetchAll(PDO::FETCH_ASSOC); // Pega todos os alunos
 
-$studentList = [];
+// $studentList = [];
 
-foreach ($studentDataList as $studentData) {
-  $studentList[] = new Student(
-    $studentData['id'],
-    $studentData['name'],
-    new DateTimeImmutable($studentData['birth_date']),
-  );
-}
+// foreach ($studentDataList as $studentData) {
+//   $studentList[] = new Student(
+//     $studentData['id'],
+//     $studentData['name'],
+//     new DateTimeImmutable($studentData['birth_date']),
+//   );
+// }
 
-var_dump($studentList);
+// var_dump($studentList);
 
 // echo $studentDataList[0]['name'];
+
+$pdo = ConnectionCreator::createConnection();
+$repository = new PdoStudentRepository($pdo);
+$studentList = $repository->allStudents();
+var_dump($studentList);
